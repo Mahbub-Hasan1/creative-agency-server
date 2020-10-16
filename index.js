@@ -74,6 +74,7 @@ client.connect(err => {
       const email = req.body.email;
       const description = req.body.description;
       const newImg = file.data;
+      const status = req.body.status;
       const encImg = newImg.toString('base64');
 
       var image = {
@@ -82,7 +83,7 @@ client.connect(err => {
           img: Buffer.from(encImg, 'base64')
       };
 
-      OrderCollection.insertOne({ name, serviceName, email, description, image })
+      OrderCollection.insertOne({ name, serviceName, email, description, status, image })
         .then(result => {
             res.send(result.insertedCount > 0);
         })
@@ -102,15 +103,17 @@ client.connect(err => {
         })
     });
 
+    // Update Status
     app.patch('/update/:id', (req, res) => {
-        OrderCollection.updateOne({ _id: ObjectId(req.params.id) },
-            {
-                $set: { status: req.body.status }
-            })
-            .then(result => {
-                res.send(result.modifiedCount > 0);
-            })
+      ordersCollection.updateOne({_id: ObjectId(req.params.id)},
+      {
+          $set: {status: req.body.status}
+      })
+      .then(result => {
+          res.send(result.modifiedCount > 0);
+      })
     })
+
 
 
     app.post('/addReview', (req, res) => {
